@@ -201,14 +201,7 @@ public class ChessGame extends AbstractGameEngine {
 			Vector<Point> movements;
 			movements = EngineUtils.parseSquareInput(enPassant);
 			
-			int dx;
-			if(movements.elementAt(0).x - movements.elementAt(1).x == -1){
-				dx = -1;
-			}else{
-				dx = 1;
-			}
-			
-			Point enPassantAttacked = new Point(movements.elementAt(1).x + dx, movements.elementAt(1).y);
+			Point enPassantAttacked = new Point(movements.elementAt(1).x, movements.elementAt(0).y);
 			
 			pieceCache = getMap().getPiece(enPassantAttacked);
 			otherPlayer.removePiece(enPassantAttacked);
@@ -301,54 +294,35 @@ public class ChessGame extends AbstractGameEngine {
 			if(currentPlayer.getName().equals("White Player")){
 				dy = 1;
 				secondRank = 6;
+				enprow = 4;
 			}else{
 				dy = -1;
 				secondRank = 1;
+				enprow = 3;
 			}
 			
-			if(Character.toLowerCase(map.getPiece(movementCache.elementAt(1)).getSymbol()) == 'p' && movementCache.elementAt(0).y == secondRank){
+			// If the last moved piece was a pawn, from the enemies starting rank
+			if(Character.toLowerCase(map.getPiece(movementCache.elementAt(1)).getSymbol()) == 'p' && 
+					                 movementCache.elementAt(0).y == secondRank){
 				
-				Point enPassantPawn = null;
+				//The enPassantPawn, is the pawn that can be captured for passing
+				//TODO possible out of bounds error?
+				Point enPassantPawn = new Point(movementCache.elementAt(0).x, enprow);
+				Point enPassantCapture = new Point(enPassantPawn.x, enPassantPawn.y + dy);
+				Point enPassantRight = new Point(enPassantPawn.x + 1, enprow); 
+				Point enPassantLeft = new Point(enPassantPawn.x - 1, enprow);
 				
-				if(Math.abs(movementCache.elementAt(0).distance(movementCache.elementAt(1))) == 2){
-					
-					if(currentPlayer.getName().equals("White Player")){
-						enprow = 3;
-					}else{
-						enprow = 4;
-					}
-					
+				if (enPassantRight.x <= 7 &&
+					Character.toLowerCase(map.getPiece(enPassantRight).getSymbol()) == 'p') {
+					currentPlayer.addMove(EngineUtils.pointToString(enPassantRight) + "x" + EngineUtils.pointToString(enPassantCapture));
 				}
 				
-				if(Math.abs(movementCache.elementAt(0).distance(movementCache.elementAt(1))) == 1){
-					
-					if(currentPlayer.getName().equals("White Player")){
-						enprow = 4;
-					}else{
-						enprow = 3;
-					}
-					
-				}
-				
-				enPassantPawn = new Point(movementCache.elementAt(0).x, enprow);
-				
-				if(enPassantPawn != null){
-					if(Character.toLowerCase(map.getPiece(enPassantPawn).getSymbol()) == 'p'){
-						
-						Point enPassantRight = new Point(movementCache.elementAt(0).x + 1, enprow + dy);
-						Point enPassantLeft = new Point(movementCache.elementAt(0).x - 1, enprow + dy);
-						
-						if(map.getCell(enPassantRight).isEmpty()){
-								currentPlayer.addMove(EngineUtils.pointToString(enPassantPawn) + "x" + EngineUtils.pointToString(enPassantRight));
-						}
-						if(map.getCell(enPassantLeft).isEmpty()){
-							currentPlayer.addMove(EngineUtils.pointToString(enPassantPawn) + "x" + EngineUtils.pointToString(enPassantLeft));
-						}
-					}
+				if (enPassantLeft.x >= 0 &&
+					Character.toLowerCase(map.getPiece(enPassantLeft).getSymbol()) == 'p') {
+					currentPlayer.addMove(EngineUtils.pointToString(enPassantLeft) + "x" + EngineUtils.pointToString(enPassantCapture));
 				}
 			}
 		}
-		
 	}
 
 	private boolean isUnderAttack(Point index) {

@@ -27,8 +27,9 @@ public class MainGame {
 			}
 		});
 		
-		MainGame mainGame = new MainGame();
-		mainGame.runMenu();
+		//Legacy Option for text only
+		//MainGame mainGame = new MainGame();
+		//mainGame.runMenu();
 	}
 	
 	public void runMenu(){
