@@ -1,17 +1,25 @@
 # chess
-My implementation of a hot-seat game of chess.
+My implementation of a chess engine
 
 To-do
 -------
-+ Must add one more rule to make game 'truly' complete -- Threefold repetition: the draw state when repeated board states happen.
++ Add draws to the game
+	+ Stalemate
+	+ Threefold repition
+	+ Fifty-move rule
+	+ Impossibility of checkmate
++ Refactor win condition to accomodate draws
++ Add rank and file labels
++ Main Game Loop likely needs to be separated
 
-Refactor Ideas
+Planned Features
 ---------
-+ Replace move logic with decorator overlays.
-+ Clean up some of the messy logic.
-+ Fix rookie mistakes in general.
++ Main Menu
++ Saved Games
++ Replays
 
-Possible Features
----------
++ 3D Graphics
+
 + Online Multiplayer
 + A.I. Players
++ Analysis Tools
