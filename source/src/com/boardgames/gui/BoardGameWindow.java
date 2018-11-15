@@ -8,14 +8,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import com.boardgames.engine.AbstractGameEngine;
-import com.boardgames.engine.CheckersGame;
 import com.boardgames.engine.ChessGame;
-import com.boardgames.engine.HexGame;
 
 public class BoardGameWindow {
 
-	AbstractGameEngine boardGame;
+	ChessGame boardGame;
 	public JFrame frame;
 	public JPanel gamePanel;
 	public MovePanel movePanel;
@@ -66,6 +63,7 @@ public class BoardGameWindow {
 		
 		final JMenu newGame = new JMenu("New Game");
 		
+		/*
 		final JMenuItem newCheckersGame = new JMenuItem("Checkers");
 		newCheckersGame.addActionListener(e ->{
 			boardGame = new CheckersGame();
@@ -74,6 +72,7 @@ public class BoardGameWindow {
 			gamePanel = new SquareBoardPanel(boardGame.getMap(), boardGame, movePanel);
 			initGamePanel();
 			});
+		*/
 		
 		final JMenuItem newChessGame = new JMenuItem("Chess");
 		newChessGame.addActionListener(e ->{
@@ -84,6 +83,7 @@ public class BoardGameWindow {
 			initGamePanel();
 			});
 		
+		/*
 		final JMenuItem newHexGame = new JMenuItem("Hex");
 		newHexGame.addActionListener(e ->{
 			boardGame = new HexGame();
@@ -91,11 +91,12 @@ public class BoardGameWindow {
 			gamePanel = new HexPanel();
 			initGamePanel();
 			});
+		*/
 		
 		fileMenu.add(newGame);
-		newGame.add(newCheckersGame);
+		//newGame.add(newCheckersGame);
 		newGame.add(newChessGame);
-		newGame.add(newHexGame);
+		//newGame.add(newHexGame);
 		
 		return fileMenu;
 	}

@@ -2,6 +2,7 @@ package com.boardgames.engine;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Vector;
 
 import com.boardgames.engine.map.SquareMap;
@@ -59,41 +60,28 @@ public class ChessGame extends AbstractGameEngine {
 		for(Point each: getMap().getGameMap().keySet()){
 			
 			if(each.y == playerPawnRow){
-				
 				temp.add(new Pawn(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-				
 			}
 			
 			if(each.y == playerOtherRow){
-				
 				if(each.x == 0 || each.x == 7){
-					
 					temp.add(new Rook(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-					
 				}
 				
 				if(each.x == 1 || each.x == 6){
-					
 					temp.add(new Knight(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-					
 				}
 				
 				if(each.x == 2 || each.x == 5){
-					
 					temp.add(new Bishop(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-					
 				}
 				
 				if(each.x == 4){
-					
 					temp.add(new King(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-					
 				}
 				
 				if(each.x == 3){
-					
 					temp.add(new Queen(new Point(each.x, each.y), getMap(), p.getPlayerCharShift(), movesNorth));
-					
 				}
 				
 			}
@@ -107,10 +95,10 @@ public class ChessGame extends AbstractGameEngine {
 
 	@Override
 	public void checkWinner() {
-		
-		winner = otherPlayer.getCurrentMoves().isEmpty();
+		winner = getCurrentPlayer().getCurrentMoves().isEmpty();
 	}
 	
+	//Checks to see if otherplayer has a move that puts you in check
 	public boolean checkCheck(){
 		
 		otherPlayer.generateMoves();
@@ -338,5 +326,33 @@ public class ChessGame extends AbstractGameEngine {
 		}
 		
 		return false;
+	}
+	
+	public void filterMoves() {
+		HashMap<String, Command> filtered = new HashMap<>();
+		
+		//clear previous cache
+		AbstractGamePiece tempPCache = pieceCache;
+		Vector<Point> tempMCache = movementCache;
+		
+		pieceCache = new NullGamePiece(null);
+		movementCache = new Vector<>();
+		
+		for(Map.Entry<String, Command> entry: getCurrentPlayer().getCurrentMoves().entrySet()) {
+			String key = entry.getKey();
+			Command value = entry.getValue();
+			
+			getCurrentPlayer().getMoveFactory().executeCommand(key);
+			
+			//Check to see if move was illegal (can't put yourself in check)
+			if(!checkCheck()) {
+				filtered.put(key, value);
+			}
+			
+			undoLastMove();
+		}
+		getCurrentPlayer().setCurrentMoves(filtered);
+		pieceCache = tempPCache;
+		movementCache = tempMCache;
 	}
 }

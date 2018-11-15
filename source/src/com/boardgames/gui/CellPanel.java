@@ -17,20 +17,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.boardgames.engine.AbstractGameEngine;
+import com.boardgames.engine.ChessGame;
 import com.boardgames.engine.map.AbstractGameMap;
 import com.boardgames.engine.utils.EngineUtils;
 
 public class CellPanel extends JPanel{
 
 	private static final long serialVersionUID = -5058846076542685149L;
-	
 	private static Dimension tileDim = new Dimension(100, 100);
-	
 	private Point CellLocation;
-
 	
-	CellPanel(SquareBoardPanel boardPanel, Point CellLocation, AbstractGameMap board, AbstractGameEngine engine, MovePanel movePanel){
+	CellPanel(SquareBoardPanel boardPanel, Point CellLocation, AbstractGameMap board, ChessGame engine, MovePanel movePanel){
 		super(new GridBagLayout());
 		this.CellLocation = CellLocation;
 		setPreferredSize(tileDim);
@@ -40,125 +37,139 @@ public class CellPanel extends JPanel{
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				int firstRank;
-				
-				if(engine.getCurrentPlayer().getName().equals("White Player")){
-					firstRank = 0;
-				}else{
-					firstRank = 7;
-				}
-				
-				if(SwingUtilities.isRightMouseButton(e)){
+				if(!false) {
+					int firstRank;
 					
-					boardPanel.source = null;
-					boardPanel.dest = null;
-					for(CellPanel each: boardPanel.boardCells.values()){
-						each.assignColor();
+					if(engine.getCurrentPlayer().getName().equals("White Player")){
+						firstRank = 0;
+					}else{
+						firstRank = 7;
 					}
 					
-				}else if(SwingUtilities.isLeftMouseButton(e)){
-					
-					engine.getCurrentPlayer().generateMoves();
-					engine.createMoves();
-					engine.findForceMoves();
-					engine.createMoves();
-					
-					
-					if(boardPanel.source == null){
-						boardPanel.source = board.getCell(CellLocation);
-						boardPanel.pieceM = board.getPiece(CellLocation);
-						if(boardPanel.pieceM == null){
-							boardPanel.source = null;
-						}
-						if(engine.getCurrentPlayer().getPieces().contains(boardPanel.pieceM)){
-							setBackground(Color.GREEN);
-						}
+					if(SwingUtilities.isRightMouseButton(e)){
 						
-						
-						for(String each: engine.getCurrentPlayer().getCurrentMoves().keySet()){
-							
-							if(!each.equals("0-0") && !each.equals("0-0-0") && each.charAt(2) != 'x'){
-								Vector<Point> temp = EngineUtils.parseSquareInput(each);
-								if(temp.elementAt(0).equals(CellLocation)){
-									boardPanel.boardCells.get(temp.elementAt(1)).setBackground(Color.RED);
-								}
-							}else{
-								if(each.equals("0-0")){
-									if(new Point(4, firstRank).equals(CellLocation)){
-										boardPanel.boardCells.get(new Point(6, firstRank)).setBackground(Color.RED);
-									}
-										
-								}else if(each.equals("0-0-0")){
-									if(new Point(4, firstRank).equals(CellLocation)){
-										boardPanel.boardCells.get(new Point(2, firstRank)).setBackground(Color.RED);
-									}
-								}else if(each.charAt(2) == 'x'){
-									String enPassant = each.replace('x', '-');
-									Vector<Point> temp = EngineUtils.parseSquareInput(enPassant);
-									if(temp.elementAt(0).equals(CellLocation)){
-										boardPanel.boardCells.get(temp.elementAt(1)).setBackground(Color.RED);
-									}
-								}
-							}
-						}
-					}else{
-						boardPanel.dest = board.getCell(CellLocation);
-						String turn = EngineUtils.pointToString(boardPanel.source.getPoint()) + 
-								"-" + EngineUtils.pointToString(boardPanel.dest.getPoint());
-						
-						if((turn.equals("e1-g1")  || turn.equals("e8-g8"))
-								&& engine.getCurrentPlayer().getCurrentMoves().containsKey("0-0")){
-							turn = "0-0";
-						}
-						
-						if((turn.equals("e1-c1")  || turn.equals("e8-c8"))
-								&& engine.getCurrentPlayer().getCurrentMoves().containsKey("0-0-0")){
-							turn = "0-0-0";
-						}
-						
-						if(engine.getCurrentPlayer().getCurrentMoves().containsKey(turn.replace('-', 'x'))){
-							turn = turn.replace('-', 'x');
-						}
-						
-						
-						if(engine.getCurrentPlayer().getCurrentMoves().containsKey(turn)){
-							engine.getCurrentPlayer().getMoveFactory().executeCommand(turn);
-							engine.getCurrentPlayer().checkPromotions();
-							if(engine.getCurrentPlayer().getCurrentMoves().isEmpty()){
-								engine.swapPlayer();
-							}
-							engine.checkWinner();
-							engine.swapPlayer();
-							engine.getCurrentPlayer().generateMoves();
-							engine.createMoves();
-							engine.findForceMoves();
-							engine.createMoves();
-							movePanel.addMove(turn);
-							if(engine.isWinner()){
-								movePanel.addMove(engine.getOtherPlayer().getName() + " has won!");
-							}
-							boardPanel.source = null;
-							boardPanel.dest = null;
-							boardPanel.source = null;
-						}else{
-							boardPanel.source = null;
-							boardPanel.dest = null;
-							boardPanel.source = null;
-						}
+						boardPanel.source = null;
+						boardPanel.dest = null;
 						for(CellPanel each: boardPanel.boardCells.values()){
 							each.assignColor();
 						}
 						
-						if(engine.getCurrentPlayer().getCurrentMoves().isEmpty()){
-							movePanel.addMove(engine.getOtherPlayer().getName() + " has won!");
+					}else if(SwingUtilities.isLeftMouseButton(e)){
+						
+						engine.getCurrentPlayer().generateMoves();
+						engine.createMoves();
+						engine.findForceMoves();
+						engine.createMoves();
+						engine.filterMoves();
+						engine.checkWinner();
+						if(engine.isWinner()) {
+							movePanel.addMove("Game has ended in a stalemate!");
 						}
-						SwingUtilities.invokeLater(new Runnable(){
-							@Override
-							public void run(){
-								boardPanel.drawBoard(board);
+						
+						
+						if(boardPanel.source == null){
+							boardPanel.source = board.getCell(CellLocation);
+							boardPanel.pieceM = board.getPiece(CellLocation);
+							if(boardPanel.pieceM == null){
+								boardPanel.source = null;
 							}
-						});
+							if(engine.getCurrentPlayer().getPieces().contains(boardPanel.pieceM)){
+								setBackground(Color.GREEN);
+							}
+							
+							
+							for(String each: engine.getCurrentPlayer().getCurrentMoves().keySet()){
+								
+								if(!each.equals("0-0") && !each.equals("0-0-0") && each.charAt(2) != 'x'){
+									Vector<Point> temp = EngineUtils.parseSquareInput(each);
+									if(temp.elementAt(0).equals(CellLocation)){
+										boardPanel.boardCells.get(temp.elementAt(1)).setBackground(Color.RED);
+									}
+								}else{
+									if(each.equals("0-0")){
+										if(new Point(4, firstRank).equals(CellLocation)){
+											boardPanel.boardCells.get(new Point(6, firstRank)).setBackground(Color.RED);
+										}
+											
+									}else if(each.equals("0-0-0")){
+										if(new Point(4, firstRank).equals(CellLocation)){
+											boardPanel.boardCells.get(new Point(2, firstRank)).setBackground(Color.RED);
+										}
+									}else if(each.charAt(2) == 'x'){
+										String enPassant = each.replace('x', '-');
+										Vector<Point> temp = EngineUtils.parseSquareInput(enPassant);
+										if(temp.elementAt(0).equals(CellLocation)){
+											boardPanel.boardCells.get(temp.elementAt(1)).setBackground(Color.RED);
+										}
+									}
+								}
+							}
+						}else{
+							boardPanel.dest = board.getCell(CellLocation);
+							String turn = EngineUtils.pointToString(boardPanel.source.getPoint()) + 
+									"-" + EngineUtils.pointToString(boardPanel.dest.getPoint());
+							
+							if((turn.equals("e1-g1")  || turn.equals("e8-g8"))
+									&& engine.getCurrentPlayer().getCurrentMoves().containsKey("0-0")){
+								turn = "0-0";
+							}
+							
+							if((turn.equals("e1-c1")  || turn.equals("e8-c8"))
+									&& engine.getCurrentPlayer().getCurrentMoves().containsKey("0-0-0")){
+								turn = "0-0-0";
+							}
+							
+							if(engine.getCurrentPlayer().getCurrentMoves().containsKey(turn.replace('-', 'x'))){
+								turn = turn.replace('-', 'x');
+							}
+							
+							
+							if(engine.getCurrentPlayer().getCurrentMoves().containsKey(turn)){
+								engine.getCurrentPlayer().getMoveFactory().executeCommand(turn);
+								engine.getCurrentPlayer().checkPromotions();
+								//if(engine.getCurrentPlayer().getCurrentMoves().isEmpty()){
+								//	engine.swapPlayer();
+								//}
+								engine.swapPlayer();
+								engine.getCurrentPlayer().generateMoves();
+								engine.createMoves();
+								engine.findForceMoves();
+								engine.createMoves();
+								engine.checkWinner();
+								
+								movePanel.addMove(turn);
+								
+								Boolean check = engine.checkCheck();
+								if(check){
+									movePanel.addMove(engine.getCurrentPlayer().getName() + " in check!");
+								}
+								if(engine.isWinner()){
+									movePanel.addMove("Game has ended!");
+									if(check){
+										movePanel.addMove(engine.getOtherPlayer().getName() + " has won!");
+									}else{
+										movePanel.addMove("Game has ended in a stalemate!");
+									}
+								}
+								
+								boardPanel.source = null;
+								boardPanel.dest = null;
+								boardPanel.source = null;
+							}else{
+								boardPanel.source = null;
+								boardPanel.dest = null;
+								boardPanel.source = null;
+							}
+							for(CellPanel each: boardPanel.boardCells.values()){
+								each.assignColor();
+							}
+							SwingUtilities.invokeLater(new Runnable(){
+								@Override
+								public void run(){
+									boardPanel.drawBoard(board);
+								}
+							});
+						}
 					}
 				}
 			}

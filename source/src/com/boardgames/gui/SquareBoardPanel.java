@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
-import com.boardgames.engine.AbstractGameEngine;
+import com.boardgames.engine.ChessGame;
 import com.boardgames.engine.map.AbstractGameMap;
 import com.boardgames.engine.map.GameCell;
 import com.boardgames.engine.piece.AbstractGamePiece;
@@ -19,13 +19,13 @@ public class SquareBoardPanel extends JPanel {
 	public GameCell source;
 	public GameCell dest;
 	public AbstractGamePiece pieceM;
-	public AbstractGameEngine engine;
+	public ChessGame engine;
 	
 	public static int boardSize = 8;
 	
 	private static Dimension boardDim = new Dimension(800, 800);
 	
-	public SquareBoardPanel(AbstractGameMap map, AbstractGameEngine engine, MovePanel movePanel){
+	public SquareBoardPanel(AbstractGameMap map, ChessGame engine, MovePanel movePanel){
 		super(new GridLayout(8,8));
 		boardCells = new HashMap<>();
 		for(int i = 0; i <boardSize; i++){

@@ -1,12 +1,16 @@
 package com.boardgames.engine.player;
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import com.boardgames.engine.map.AbstractGameMap;
 import com.boardgames.engine.map.SquareMap;
+import com.boardgames.engine.ChessGame;
 import com.boardgames.engine.piece.AbstractGamePiece;
 import com.boardgames.engine.piece.NullGamePiece;
 import com.boardgames.engine.piece.chess.Queen;
+import com.boardgames.engine.utils.Command;
 import com.boardgames.engine.utils.CommandFactory;
 
 public class ChessPlayer extends AbstractGamePlayer {
@@ -53,4 +57,5 @@ public class ChessPlayer extends AbstractGamePlayer {
 			
 		}
 	}
+	
 }
