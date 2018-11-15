@@ -3,6 +3,7 @@ My implementation of a chess engine
 
 To-do
 -------
++ Remove extraneous code. Refactor to just be chess.
 + Add draws to the game
         + Stalemate (done)
 	+ Threefold repition
