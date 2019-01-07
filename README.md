@@ -1,5 +1,8 @@
 # chess
-My implementation of a chess engine
+My implementation of a chess engine.
+
+In order to play you must have java/jre 8 installed.
+Run the boardgames.jar and then file>new game>chess
 
 To-do
 -------
